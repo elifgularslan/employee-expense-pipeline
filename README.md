@@ -132,6 +132,29 @@ kafka-topics.sh --bootstrap-server localhost:9092 --list
 - Cassandra çıktısındaki tek `UN` satırı, düğümün ayakta ve normal durumda olduğunu gösterir.
 - Kafka çıktısında `accounting`, `operations`, `research` ve `sales` görünür.
 
+### MySQL personel bilgilerini doğrula
+
+```bash
+mysql -h 127.0.0.1 -P 3307 -u pro3 -p sau_pro3 -e \
+"SELECT e.empno, e.ename, m.ename AS manager, d.dname AS department, e.sal, e.comm
+ FROM emp e
+ JOIN dept d ON d.deptno = e.deptno
+ LEFT JOIN emp m ON m.empno = e.mgr
+ WHERE e.empno = 7788;"
+```
+
+`Enter password:` sorulduğunda `pro3-local` yaz. Bu, kurulum betiğinin 3307 portundaki yerel MySQL örneğinde oluşturduğu `pro3` kullanıcısının demo parolasıdır. Yazdığın karakterler görünmez. Çıktıda **SCOTT**, **JONES**, **RESEARCH**, **3000.00** ve komisyon için `NULL` beklenir.
+
+### Web uygulamasından HDFS fotoğrafını doğrula
+
+```bash
+hdfs dfs -ls /sau-pro3/photos/scott.jpg
+curl -fsS -o /dev/null -w 'HTTP %{http_code} | %{content_type}\n' \
+  http://127.0.0.1:8083/employees/7788/photo
+```
+
+SCOTT profiline JPEG yükledikten sonra HDFS’de `scott.jpg`, web yanıtında `HTTP 200 | image/jpeg` beklenir. Fotoğraf yüklenmemişse web uç noktası yer tutucuyu `image/png` olarak döndürür.
+
 ### Spark ve web uygulaması
 
 ```bash
@@ -161,7 +184,7 @@ Cassandra tarafında SCOTT’un kayıtlarını görmek için:
 
 ```bash
 cqlsh 127.0.0.1 9042 -e \
-  "SELECT empno, topic, description, payment
+  "SELECT empno, topic, occurred_at, description, payment
    FROM sau_pro3.expenses WHERE empno = 7788;"
 ```
 
@@ -412,6 +435,29 @@ kafka-topics.sh --bootstrap-server localhost:9092 --list
 - Cassandra reports one `UN` node. `UN` means the node is up and in the normal state.
 - Kafka lists `accounting`, `operations`, `research`, and `sales`.
 
+### Verify employee details in MySQL
+
+```bash
+mysql -h 127.0.0.1 -P 3307 -u pro3 -p sau_pro3 -e \
+"SELECT e.empno, e.ename, m.ename AS manager, d.dname AS department, e.sal, e.comm
+ FROM emp e
+ JOIN dept d ON d.deptno = e.deptno
+ LEFT JOIN emp m ON m.empno = e.mgr
+ WHERE e.empno = 7788;"
+```
+
+At the `Enter password:` prompt, enter `pro3-local`. The setup script assigns this demo password to the `pro3` user on the local MySQL instance at port 3307. Characters are hidden as you type. Expect **SCOTT**, **JONES**, **RESEARCH**, **3000.00**, and `NULL` for commission.
+
+### Verify the HDFS photo through the web application
+
+```bash
+hdfs dfs -ls /sau-pro3/photos/scott.jpg
+curl -fsS -o /dev/null -w 'HTTP %{http_code} | %{content_type}\n' \
+  http://127.0.0.1:8083/employees/7788/photo
+```
+
+After uploading a JPEG on SCOTT’s profile, expect `scott.jpg` in HDFS and `HTTP 200 | image/jpeg` from the web endpoint. For a profile without an uploaded photo, the endpoint serves the placeholder as `image/png`.
+
 ### Spark and Spring Boot
 
 ```bash
@@ -441,7 +487,7 @@ To check SCOTT’s records in Cassandra:
 
 ```bash
 cqlsh 127.0.0.1 9042 -e \
-  "SELECT empno, topic, description, payment
+  "SELECT empno, topic, occurred_at, description, payment
    FROM sau_pro3.expenses WHERE empno = 7788;"
 ```
 
