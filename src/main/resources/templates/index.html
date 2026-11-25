@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Employee expense report</title>
+  <link rel="stylesheet" th:href="@{/report.css}">
+</head>
+<body>
+<main>
+  <a class="back-link" th:href="@{/}">← All employees</a>
+  <h1>Employee expense report</h1>
+  <div class="layout">
+    <nav aria-label="Employee list" class="panel people">
+      <h2>Employees</h2>
+      <ul>
+        <li th:each="person : ${personnel}">
+          <a th:href="@{/employees/{id}(id=${person.empno})}"
+             th:attr="aria-current=${employee != null and employee.empno == person.empno ? 'page' : null}"
+             th:text="${person.ename}">SCOTT</a>
+        </li>
+      </ul>
+    </nav>
+
+    <div th:if="${employee != null}">
+      <section class="panel">
+        <div class="profile">
+          <img th:src="@{/employees/{id}/photo(id=${employee.empno})}" th:alt="|${employee.ename} profile photo|" width="96" height="96">
+          <div>
+            <h2 th:text="${employee.ename}">SCOTT</h2>
+            <p th:text="|${employee.department} · #${employee.empno}|">RESEARCH · #7788</p>
+          </div>
+        </div>
+        <dl>
+          <div><dt>Manager</dt><dd th:text="${employee.manager ?: '—'}">JONES</dd></div>
+          <div><dt>Salary</dt><dd th:text="${#numbers.formatDecimal(employee.sal, 1, 2)}">3000.00</dd></div>
+          <div><dt>Commission</dt><dd th:text="${employee.comm == null ? '—' : #numbers.formatDecimal(employee.comm, 1, 2)}">—</dd></div>
+        </dl>
+        <details>
+          <summary>Upload photo</summary>
+          <form method="post" enctype="multipart/form-data" th:action="@{/employees/{id}/photo(id=${employee.empno})}">
+            <label for="photo">JPEG file, up to 5 MB</label>
+            <input id="photo" type="file" name="photo" accept="image/jpeg" required>
+            <button>Save to HDFS</button>
+          </form>
+        </details>
+        <p role="status" th:if="${photoMessage}" th:text="${photoMessage}"></p>
+        <p role="alert" th:if="${photoError}" th:text="${photoError}"></p>
+      </section>
+      <section class="panel expenses">
+        <h2>Expenses</h2>
+        <p role="status" th:if="${reportUnavailable}">The expense report is unavailable. Refresh the page in a moment.</p>
+        <div th:if="${report != null}">
+          <dl class="totals">
+            <div><dt>Total expenses</dt><dd id="expense-total" th:text="${#numbers.formatDecimal(report.total, 1, 2)}">0.00</dd></div>
+            <div><dt>Transactions</dt><dd th:text="${report.count}">0</dd></div>
+          </dl>
+          <p th:if="${report.count == 0}">No expenses recorded yet.</p>
+          <p th:if="${report.count > 0 and #lists.isEmpty(report.expenses)}">No transactions on this page.</p>
+          <div class="table-scroll" th:unless="${#lists.isEmpty(report.expenses)}">
+            <table aria-label="Expense transactions">
+              <thead><tr><th>Date and time</th><th>Description</th><th>Type</th><th>Quantity</th><th>Payment</th></tr></thead>
+              <tbody>
+              <tr th:each="expense : ${report.expenses}">
+                <td th:text="${#strings.replace(#strings.substring(expense.occurredAt, 0, 16), 'T', ' ')}">2026-11-23 10:00</td>
+                <td th:text="${expense.description}">Bread</td>
+                <td th:text="${expense.type}">Food</td>
+                <td th:text="${expense.quantity}">1</td>
+                <td th:text="${#numbers.formatDecimal(expense.payment, 1, 2)}">12.50</td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+          <nav class="pages" aria-label="Expense pages" th:if="${page > 1 or hasNext}">
+            <a th:if="${page > 1}" th:href="@{/employees/{id}(id=${employee.empno},page=${page - 1})}">Previous</a>
+            <span th:text="|Page ${page}|">Page 1</span>
+            <a th:if="${hasNext}" th:href="@{/employees/{id}(id=${employee.empno},page=${page + 1})}">Next</a>
+          </nav>
+        </div>
+      </section>
+    </div>
+  </div>
+</main>
+</body>
+</html>

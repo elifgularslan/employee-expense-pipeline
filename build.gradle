@@ -1,0 +1,29 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.5.13'
+}
+
+group = 'edu.sau'
+version = '1.0.0'
+java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+
+repositories { mavenCentral() }
+
+dependencies {
+    implementation platform('org.springframework.boot:spring-boot-dependencies:3.5.13')
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+    implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+    runtimeOnly 'com.mysql:mysql-connector-j'
+    implementation 'org.apache.hadoop:hadoop-client-api:3.3.6'
+    runtimeOnly 'org.apache.hadoop:hadoop-client-runtime:3.3.6'
+    implementation 'org.apache.kafka:kafka-clients:3.9.1'
+    compileOnly 'org.apache.spark:spark-sql_2.12:3.5.8'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+tasks.withType(JavaCompile).configureEach { options.compilerArgs.add('-parameters') }
+tasks.named('test') { useJUnitPlatform() }
+springBoot.mainClass = 'edu.sau.pro3.Application'
+tasks.named('jar') { archiveClassifier = '' }
+tasks.named('bootJar') { archiveClassifier = 'boot' }

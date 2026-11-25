@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Employees | Employee expense report</title>
+  <link rel="stylesheet" th:href="@{/report.css}">
+</head>
+<body>
+<main>
+  <h1>Employees</h1>
+  <section class="panel directory" aria-label="Employee directory">
+    <p role="status" th:if="${photosUnavailable}">Employee photos are temporarily unavailable.</p>
+    <p th:if="${#lists.isEmpty(employees)}">No employees found.</p>
+    <div class="table-scroll" th:unless="${#lists.isEmpty(employees)}">
+      <table class="employee-table" aria-label="Employees">
+        <thead>
+          <tr>
+            <th scope="col">Photo</th>
+            <th scope="col">Employee ID</th>
+            <th scope="col">Name</th>
+            <th scope="col">Department</th>
+            <th scope="col">Manager</th>
+            <th scope="col" class="number">Salary</th>
+            <th scope="col" class="number">Commission</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr th:each="employee : ${employees}">
+            <td>
+              <img th:if="${photoNames.contains(employee.img)}"
+                   th:src="@{/employees/{id}/photo(id=${employee.empno})}"
+                   th:alt="|${employee.ename} profile photo|" width="44" height="44" loading="lazy">
+              <span class="photo-status" th:unless="${photoNames.contains(employee.img)}"
+                    th:text="${photosUnavailable == true ? 'Unavailable' : 'No photo'}">No photo</span>
+            </td>
+            <td th:text="${employee.empno}">7788</td>
+            <th scope="row">
+              <a th:href="@{/employees/{id}(id=${employee.empno})}" th:text="${employee.ename}">SCOTT</a>
+            </th>
+            <td th:text="${employee.department}">RESEARCH</td>
+            <td th:text="${employee.manager ?: '—'}">JONES</td>
+            <td class="number" th:text="${#numbers.formatDecimal(employee.sal, 1, 2)}">3000.00</td>
+            <td class="number" th:text="${employee.comm == null ? '—' : #numbers.formatDecimal(employee.comm, 1, 2)}">—</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</main>
+</body>
+</html>

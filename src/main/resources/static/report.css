@@ -1,0 +1,50 @@
+:root {
+  color-scheme: light;
+  font-family: system-ui, sans-serif;
+  color: #15223b;
+  background: #f3f6fb;
+}
+body { margin: 0; }
+main { max-width: 1120px; margin: auto; padding: 36px 24px 50px; }
+h1 { margin: 0 0 24px; font-size: clamp(1.8rem, 5vw, 2.5rem); }
+h2 { margin: 0 0 16px; font-size: 1.25rem; }
+p { color: #435575; }
+.layout { display: grid; grid-template-columns: 190px minmax(0, 1fr); gap: 20px; align-items: start; }
+.panel { background: white; border: 1px solid #dce4f0; border-radius: 12px; padding: 22px; }
+.people ul { padding: 0; margin: 0; list-style: none; }
+.people a { display: block; padding: 7px 9px; border-radius: 6px; text-decoration: none; }
+a { color: #254f97; }
+.people a[aria-current], .people a:hover { color: #183a76; background: #e6efff; }
+.profile { display: flex; align-items: center; gap: 16px; }
+.profile h2, .profile p { margin: 0 0 4px; }
+.profile img { object-fit: cover; border-radius: 10px; background: #e8eef7; }
+dl { display: flex; flex-wrap: wrap; gap: 20px 34px; margin: 22px 0; }
+dt { color: #435575; }
+dd { margin: 5px 0 0; font-weight: 650; }
+.expenses { margin-top: 16px; }
+.totals dd { font-size: 1.45rem; }
+.table-scroll { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; text-align: left; font-variant-numeric: tabular-nums; }
+td, th { border-top: 1px solid #dce4f0; padding: 10px; white-space: nowrap; }
+td:last-child, th:last-child { text-align: right; }
+.pages { display: flex; align-items: center; gap: 14px; margin-top: 14px; }
+summary { cursor: pointer; color: #254f97; }
+form { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin-top: 12px; }
+form label { flex-basis: 100%; color: #435575; }
+button { background: #254f97; color: white; border: 0; border-radius: 6px; padding: 8px 14px; cursor: pointer; }
+@media (max-width: 640px) {
+  main { padding: 22px 12px; }
+  .layout { grid-template-columns: 1fr; gap: 12px; }
+  .people ul { display: flex; flex-wrap: wrap; }
+  .panel { padding: 14px; }
+}
+
+.directory { padding-block: 8px; }
+.directory thead th { background: #f3f6fb; color: #435575; font-size: .875rem; }
+.employee-table thead th { border-top: 0; }
+.employee-table tbody tr:hover { background: #f6f9fe; }
+.employee-table tbody th a { font-weight: 650; }
+.employee-table .number { text-align: right; }
+.employee-table img { display: block; border-radius: 8px; object-fit: cover; }
+.photo-status { color: #435575; font-size: .875rem; }
+.back-link { display: inline-block; margin-bottom: 12px; }
